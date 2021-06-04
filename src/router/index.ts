@@ -8,7 +8,11 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "",
-        component: () => import("../components/CustomerDashboard.vue"),
+        component: () => import("../components/Dashboard.vue"),
+      },
+      {
+        path: "/get-credit",
+        component: () => import("../components/CreateLoan.vue"),
       },
     ],
   },

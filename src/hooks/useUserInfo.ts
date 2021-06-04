@@ -22,8 +22,10 @@ export interface User {
 export const useUser = (): { userData: Ref<User>; getUserData: any } => {
   const userData = ref<User>({});
 
-  const getUserData = async () => {
-    const { data } = await axios.get<User>("https://reqres.in/api/users/2");
+  const getUserData = async (userID) => {
+    const { data } = await axios.get<User>(
+      `https://reqres.in/api/users/${userID}`
+    );
 
     userData.value = data;
   };

@@ -30,8 +30,8 @@
                   color="white"
                   text-color="secondary"
                   :options="[
-                    { label: 'Customer', value: 1 },
-                    { label: 'Admin', value: 2 },
+                    { label: 'Customer', value: UserTypes.Customer },
+                    { label: 'Admin', value: UserTypes.Admin },
                   ]"
                 />
                 <q-input
@@ -77,13 +77,17 @@ import axios from "axios";
 import { ref, defineComponent } from "vue";
 import router from "@/router";
 import { useQuasar } from "quasar";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { UserTypes } from "@/static/UserTypes";
 export default defineComponent({
   setup() {
     const email = ref("eve.holt@reqres.in");
     const password = ref("cityslicka");
-    const userType = ref(1);
+    const userType = ref(UserTypes.Customer);
     const loading = ref(false);
     const $q = useQuasar();
+    const { setValue: setToken } = useLocalStorage("token");
+    const { setValue: setUserType } = useLocalStorage("userType");
     const onSubmit = async () => {
       loading.value = true;
       try {
@@ -93,7 +97,8 @@ export default defineComponent({
         );
         loading.value = false;
         if (data.token) {
-          localStorage.setItem("token", data.token);
+          setToken(data.token);
+          setUserType(userType.value);
           router.push("/");
         }
       } catch (error) {
@@ -104,7 +109,7 @@ export default defineComponent({
         loading.value = false;
       }
     };
-    return { email, password, userType, loading, onSubmit };
+    return { email, password, userType, loading, onSubmit, UserTypes };
   },
 });
 </script>
