@@ -24,7 +24,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/card-screen",
     component: () => import("../components/CardScreen.vue"),
-    name: "login",
   },
   {
     path: "/",
