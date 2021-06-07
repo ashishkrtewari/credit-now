@@ -5,7 +5,7 @@
         <q-item-section>
           <q-select
             class="bg-white text-white"
-            v-model="filterList"
+            v-model="selectedFilter"
             :options="filterOptions"
             label="Filter Loans"
             filled
@@ -13,82 +13,113 @@
         </q-item-section>
       </q-item>
     </aside>
-    <section class="row col-9" v-if="loanData?.length">
+    <section class="row col-9">
       <div class="col-10 offset-1">
-        <h2 class="text-h4">{{ filterList }} Loans</h2>
+        <h2 class="text-h4">{{ selectedFilter }} Loans</h2>
         <list-loan
-          :loanData="pendingApprovalLoans"
-          v-if="filterList === LoanStatus.PendingApproval"
-        />
-        <list-loan
-          :loanData="approvedLoans"
-          v-else-if="filterList === LoanStatus.Approved"
-        />
-        <list-loan
-          :loanData="activeLoans"
-          v-else-if="filterList === LoanStatus.Active"
-        />
-        <list-loan
-          :loanData="completedLoans"
-          v-else-if="filterList === LoanStatus.Completed"
+          :loanData="filteredList"
+          v-if="filteredList.length"
+          @loanClick="(loan) => handleLoanClick(loan)"
         />
         <p v-else class="text-left">No loans Found</p>
       </div>
     </section>
+    <q-dialog
+      v-model="showLoan"
+      ref="dialogRef"
+      @hide="
+        () => {
+          selectedLoan = null;
+          showLoan = false;
+        }
+      "
+    >
+      <loan-details :loan="selectedLoan">
+        <q-btn
+          v-if="selectedLoan.status === LoanStatus.PendingApproval"
+          v-close-popup
+          color="positive"
+          label="Approve Loan"
+          @click="() => updateStatusAndFilterLoanList(LoanStatus.Approved)"
+        />
+        <q-btn
+          v-close-popup
+          color="negative"
+          label="Reject Loan"
+          @click="() => updateStatusAndFilterLoanList(LoanStatus.Rejected)"
+        />
+        <q-btn v-close-popup color="warning" label="Close" />
+      </loan-details>
+    </q-dialog>
   </main>
 </template>
 
 <script lang="ts">
 import ListLoan from "./ListLoan.vue";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import LoanDetails from "./LoanDetails.vue";
 import { Loan, LoanStatus } from "@/models/Loan";
 import { ref } from "@vue/reactivity";
+import { onMounted, watch } from "vue";
+import { useLoan } from "@/hooks/useLoan";
+import { Notify, QDialog } from "quasar";
 export default {
-  components: { ListLoan },
+  components: { ListLoan, LoanDetails },
   setup() {
-    const { storedValue: loanData } = useLocalStorage<Loan[]>("loanData", []);
-    const filterList = ref(LoanStatus.PendingApproval);
-    const pendingApprovalLoans: Loan[] = [];
-    const approvedLoans: Loan[] = [];
-    const activeLoans: Loan[] = [];
-    const completedloans: Loan[] = [];
+    const { loanData, updateStatus } = useLoan({});
+    const selectedFilter = ref(LoanStatus.PendingApproval);
+    const selectedLoan = ref<Loan>();
+    const filteredList = ref([...loanData.value]);
+    const showLoan = ref(false);
+    const dialogRef = ref<QDialog>();
+    const handleLoanClick = (loan) => {
+      selectedLoan.value = loan;
+      showLoan.value = true;
+    };
 
     const filterOptions = [
-      LoanStatus.Approved,
+      LoanStatus.PendingApproval,
       LoanStatus.Approved,
       LoanStatus.Active,
+      LoanStatus.Rejected,
       LoanStatus.Completed,
     ];
+    const updateFilteredList = (status = selectedFilter.value) => {
+      filteredList.value = loanData.value.filter(
+        (loan) => loan.status === status
+      );
+    };
+    onMounted(() => updateFilteredList());
 
-    loanData.value.forEach((loan) => {
-      switch (loan.status) {
-        case LoanStatus.PendingApproval:
-          pendingApprovalLoans.push(loan);
-          break;
-        case LoanStatus.Active:
-          activeLoans.push(loan);
-          break;
-        case LoanStatus.Approved:
-          approvedLoans.push(loan);
-          break;
-        case LoanStatus.Completed:
-          completedloans.push(loan);
-          break;
-
-        default:
-          break;
-      }
-    });
+    const updateStatusAndFilterLoanList = (status: string) => {
+      updateStatus(selectedLoan?.value?.id as number, status).then(
+        (response) => {
+          if (response) {
+            updateFilteredList();
+            dialogRef?.value?.hide();
+            Notify.create({
+              message: "Loan Approved!",
+              icon: "check_circle",
+            });
+          }
+        }
+      );
+    };
+    watch(selectedFilter, (selectedStatus) =>
+      updateFilteredList(selectedStatus)
+    );
 
     return {
       loanData,
       LoanStatus,
-      pendingApprovalLoans,
-      approvedLoans,
-      activeLoans,
-      completedloans,
+      filteredList,
       filterOptions,
-      filterList,
+      selectedFilter,
+      selectedLoan,
+      showLoan,
+      dialogRef,
+      handleLoanClick,
+      updateStatus,
+      updateStatusAndFilterLoanList,
     };
   },
 };

@@ -30,6 +30,19 @@
         <list-loan :loanData="loanData" />
       </div>
     </section>
+    <q-dialog
+      v-model="showLoan"
+      @hide="
+        () => {
+          selectedLoan = null;
+          showLoan = false;
+        }
+      "
+    >
+      <loan-details :loan="selectedLoan">
+        <q-btn v-close-popup color="warning" label="Close" />
+      </loan-details>
+    </q-dialog>
   </main>
 </template>
 

@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar class="bg-secondary">
         <q-toolbar-title class="text-bold"> Credit Now </q-toolbar-title>
-        <user-info :userData="userData"></user-info>
+        <user-info :user="userData"></user-info>
         <q-btn
           rounded
           align="between"

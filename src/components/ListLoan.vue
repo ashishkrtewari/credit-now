@@ -5,6 +5,11 @@
         :key="loan.id"
         v-for="loan of loanData"
         class="my-card q-ma-md bg-secondary"
+        @click="
+          () => {
+            handleLoanClick(loan);
+          }
+        "
       >
         <q-item tag="label" v-ripple>
           <q-item-section avatar top>
@@ -13,7 +18,7 @@
                 {{ formatNumber(loan.amount) }}
               </p>
               <p class="text-subtitle1 q-mb-xs text-white">
-                {{ loan.repayMonths }} months
+                {{ loan.term }} months
               </p>
               <p
                 class="text-subtitle1"
@@ -32,16 +37,19 @@
   </q-scroll-area>
 </template>
 
-<script>
+<script lang="ts">
 import { formatNumber } from "@/static/utils";
-import { LoanStatus } from "@/models/Loan";
+import { LoanStatus, Loan } from "@/models/Loan";
 export default {
   name: "list-loan",
   props: {
     loanData: Object,
   },
-  setup() {
-    return { formatNumber, LoanStatus };
+  setup(props, context) {
+    const handleLoanClick = (loan: Loan) => {
+      context.emit("loanClick", loan);
+    };
+    return { formatNumber, LoanStatus, handleLoanClick };
   },
 };
 </script>

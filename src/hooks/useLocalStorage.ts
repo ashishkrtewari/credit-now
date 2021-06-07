@@ -6,11 +6,10 @@ export const useLocalStorage = <T>(
 ): { storedValue: Ref<T>; setValue } => {
   const getValue = () => {
     const value = window.localStorage.getItem(key);
-    const data = value ? JSON.parse(value) : null;
-    return data;
+    return value ? JSON.parse(value) : null;
   };
 
-  const setValue = async (value) => {
+  const setValue = async (value: T) => {
     try {
       window.localStorage.setItem(key, JSON.stringify(value));
       storedValue.value = value;

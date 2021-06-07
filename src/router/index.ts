@@ -22,6 +22,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "login",
   },
   {
+    path: "/card-screen",
+    component: () => import("../components/CardScreen.vue"),
+    name: "login",
+  },
+  {
     path: "/",
     redirect: "/dashboard",
   },

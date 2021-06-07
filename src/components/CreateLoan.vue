@@ -60,13 +60,13 @@
           <q-scroll-area style="height: 200px; width: 100%">
             <div class="row no-wrap" v-if="emiPlans">
               <q-card
-                :key="noOfMonths"
-                v-for="noOfMonths of emiPlans"
+                :key="plan"
+                v-for="plan of emiPlans"
                 class="my-card q-ma-md bg-secondary"
               >
                 <q-item tag="label" v-ripple>
                   <q-item-section avatar top>
-                    <q-radio dark v-model="repayMonths" :val="noOfMonths" />
+                    <q-radio dark v-model="term" :val="plan" />
                     <q-item-label caption
                       ><p
                         class="
@@ -76,7 +76,7 @@
                         "
                       >
                         <span class="text-h6">{{
-                          formatNumber(getEMIAmount(amount, noOfMonths))
+                          formatNumber(getEMIAmount(amount, term))
                         }}</span
                         ><span class="text-grey-4"> /month</span>
                       </p>
@@ -87,7 +87,7 @@
                           text-white
                         "
                       >
-                        <span> for {{ noOfMonths }} months</span>
+                        <span> for {{ term }} months</span>
                       </p></q-item-label
                     >
                   </q-item-section>
@@ -114,7 +114,7 @@
               <p class="text-h6">EMI</p>
               <p>
                 <span class="text-h6">
-                  {{ formatNumber(getEMIAmount(amount, repayMonths)) }}</span
+                  {{ formatNumber(getEMIAmount(amount, term)) }}</span
                 ><span class="text-grey-4"> /month</span>
               </p>
             </div>
@@ -134,8 +134,8 @@
                   formatNumber(
                     calculateTotalInterest({
                       loanAmount: amount,
-                      noOfMonths: repayMonths,
-                    }) * repayMonths
+                      term: term,
+                    }) * term
                   )
                 }}
                 <span class="text-overline block">Total Interest</span>
@@ -145,9 +145,7 @@
           <q-card class="bg-primary text-center">
             <div class="row justify-center q-px-md q-pt-sm text-white">
               <p class="text-h6 q-mb-xs">
-                {{
-                  formatNumber(getEMIAmount(amount, repayMonths) * repayMonths)
-                }}
+                {{ formatNumber(getEMIAmount(amount, term) * term) }}
                 <span class="text-overline block">Total of all EMIs</span>
               </p>
             </div>
@@ -176,16 +174,20 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { formatNumber, getAvailableCredit } from "../static/utils";
 import { Loan, LoanStatus } from "../models/Loan";
 import { useRouter } from "vue-router";
+import { useUser } from "@/hooks/useUserInfo";
 export default {
   setup() {
     const router = useRouter();
     const {
       amount,
-      repayMonths,
+      term,
       emiPlans,
       getEMIAmount,
       calculateTotalInterest,
+      interestRate,
     } = useLoan({ amount: 1000 });
+    const { userData } = useUser();
+
     const { storedValue: loanData, setValue: setLoanData } = useLocalStorage<
       Loan[]
     >("loanData", []);
@@ -198,8 +200,11 @@ export default {
         const loan: Loan = {
           id: Date.now(),
           amount: amount.value,
-          repayMonths: repayMonths.value,
+          term: term.value,
           status: LoanStatus.PendingApproval,
+          user: userData.value,
+          emi: getEMIAmount(amount.value, term.value),
+          interestRate,
         };
         setLoanData([...loanData.value, loan]).then((saved) => {
           if (saved) {
@@ -212,7 +217,7 @@ export default {
       step: ref(1),
       amount,
       emiPlans,
-      repayMonths,
+      term,
       getEMIAmount,
       formatNumber,
       calculateTotalInterest,
