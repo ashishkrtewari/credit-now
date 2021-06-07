@@ -1,1 +1,1 @@
-export const emiPlans: number[] = [36, 24, 12];
+export const emiPlans: number[] = [36, 24, 12, 6];

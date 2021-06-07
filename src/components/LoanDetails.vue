@@ -1,11 +1,33 @@
 <template>
   <q-card class="my-card full-width text-center">
-    <q-card-section class="column full-height justify-between">
-      <h3 class="q-mb-md text-weight-bold text-secondary">Total Amount</h3>
+    <q-card-section class="column full-height justify-between q-pa-none">
+      <div
+        class="column items-center user-details bg-positive relative-position"
+      >
+        <q-avatar color="primary q-mb-xs">
+          <img :src="loan.user?.avatar" round alt="avatar" />
+        </q-avatar>
+        <h2 class="q-ma-none text-h5 text-bolder">
+          {{ loan.user?.first_name + " " + loan.user?.last_name }}
+        </h2>
+        <p class="q-mb-none text-white">
+          {{ new Date(loan.id).toDateString() }}
+        </p>
+
+        <q-badge
+          color="secondary"
+          align="bottom"
+          class="status"
+          :label="loan.status"
+        />
+      </div>
+      <h3 class="q-mb-md text-weight-bold text-secondary text-h4 text-normal">
+        Total Amount
+      </h3>
       <p class="text-h4">{{ formatNumber(loan.amount) }}</p>
       <div class="row justify-center q-mt-md">
         <div class="col-3">
-          <p class="text-weight-medium text-secondary">Loan Term</p>
+          <p class="text-weight-medium text-secondary q-mb-xs">Loan Term</p>
           <q-chip
             size="md"
             text-color="white"
@@ -16,7 +38,7 @@
           />
         </div>
         <div class="col-3">
-          <p class="text-weight-medium text-secondary">Monthly EMI</p>
+          <p class="text-weight-medium text-secondary q-mb-xs">Monthly EMI</p>
           <q-chip
             size="md"
             text-color="white"
@@ -26,18 +48,28 @@
           />
         </div>
         <div class="col-3">
-          <p class="text-weight-medium text-secondary">Interest Rate</p>
+          <p class="text-weight-medium text-secondary q-mb-xs">Interest Rate</p>
           <q-chip
             size="md"
             text-color="white"
             color="primary"
-            :label="loan.interestRate"
+            :label="loan.interestRate + '%'"
+            class="q-px-lg"
+          />
+        </div>
+        <div class="col-3">
+          <p class="text-weight-medium text-secondary q-mb-xs">Repaid Amount</p>
+          <q-chip
+            size="md"
+            text-color="white"
+            color="primary"
+            :label="formatNumber(loan.paidAmount)"
             class="q-px-lg"
           />
         </div>
       </div>
 
-      <q-separator />
+      <q-separator class="q-my-sm" />
 
       <q-card-actions align="right">
         <slot></slot>
@@ -66,4 +98,14 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.user-details {
+  border-radius: 0 0 10rem 10rem;
+  padding: 1rem 0;
+}
+.status {
+  position: absolute;
+  bottom: 0;
+  transform: translateY(50%);
+}
+</style>

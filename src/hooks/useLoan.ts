@@ -1,4 +1,4 @@
-import { Loan } from "@/models/Loan";
+import { Loan, LoanStatus } from "@/models/Loan";
 import { emiPlans } from "@/static/EMIPlans";
 import { Ref, ref } from "@vue/reactivity";
 import { useLocalStorage } from "./useLocalStorage";
@@ -7,7 +7,7 @@ const loanData: Ref<Loan[]> = ref([]);
 
 export const useLoan = ({ amount = 80000, interestRate = 2 }) => {
   const { storedValue, setValue } = useLocalStorage<Loan[]>("loanData");
-  loanData.value = storedValue.value;
+  loanData.value = storedValue.value || [];
 
   const calculateTotalInterest = ({ loanAmount, term }) =>
     (loanAmount * (interestRate * 0.01)) / term;
@@ -25,15 +25,11 @@ export const useLoan = ({ amount = 80000, interestRate = 2 }) => {
     }
   };
 
-  const updateStatus = async (
-    loanId: number,
-    status: string
-  ): Promise<boolean> => {
+  const updateLoan = async (loanId, updateFunction) => {
     try {
       loanData.value = loanData.value.map((loan) => {
         if (loan.id === loanId) {
-          loan.status = status;
-          return loan;
+          return updateFunction(loan);
         }
         return loan;
       });
@@ -42,6 +38,29 @@ export const useLoan = ({ amount = 80000, interestRate = 2 }) => {
     } catch (error) {
       return false;
     }
+  };
+
+  const payLoanEMI = (loanId: number): Promise<boolean> => {
+    return updateLoan(loanId, (loan: Loan) => {
+      const totalAmount = loan.emi * loan.term;
+      loan.paidAmount += loan.emi;
+      if (loan.paidAmount >= totalAmount) {
+        loan.status = LoanStatus.Completed;
+      } else if (loan.paidAmount === loan.emi) {
+        loan.status = LoanStatus.Active;
+      }
+      return loan;
+    });
+  };
+
+  const updateStatus = async (
+    loanId: number,
+    status: string
+  ): Promise<boolean> => {
+    return updateLoan(loanId, (loan) => {
+      loan.status = status;
+      return loan;
+    });
   };
 
   return {
@@ -54,5 +73,6 @@ export const useLoan = ({ amount = 80000, interestRate = 2 }) => {
     loanData,
     updateStatus,
     getLoan,
+    payLoanEMI,
   };
 };

@@ -27,11 +27,15 @@
     <section class="row" v-if="loanData?.length">
       <div class="col-10 offset-1">
         <h2 class="text-h4">Existing Loans</h2>
-        <list-loan :loanData="loanData" />
+        <list-loan
+          :loanData="loanData"
+          @loanClick="(loan) => handleLoanClick(loan)"
+        />
       </div>
     </section>
     <q-dialog
       v-model="showLoan"
+      ref="dialogRef"
       @hide="
         () => {
           selectedLoan = null;
@@ -40,30 +44,67 @@
       "
     >
       <loan-details :loan="selectedLoan">
-        <q-btn v-close-popup color="warning" label="Close" />
+        <q-btn
+          v-if="
+            selectedLoan.status === LoanStatus.Approved ||
+            selectedLoan.status === LoanStatus.Active
+          "
+          color="secondary"
+          label="Pay EMI"
+          @click="payLoan"
+        />
+        <q-btn v-close-popup color="warning" label="Cancel" />
       </loan-details>
     </q-dialog>
   </main>
 </template>
 
 <script lang="ts">
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useRouter } from "vue-router";
-import { Loan, LoanStatus } from "@/models/Loan";
+import { LoanStatus } from "@/models/Loan";
 import { formatNumber, getAvailableCredit } from "@/static/utils";
 import ListLoan from "./ListLoan.vue";
+
+import LoanDetails from "./LoanDetails.vue";
+import { ref } from "@vue/reactivity";
+import { Notify, QDialog } from "quasar";
+import { useLoan } from "@/hooks/useLoan";
 export default {
   components: {
     ListLoan,
+    LoanDetails,
   },
   setup() {
     const router = useRouter();
     const getCredit = () => {
       router.push("./get-credit");
     };
-    const { storedValue: loanData } = useLocalStorage<Loan[]>("loanData", []);
+    const { payLoanEMI, loanData } = useLoan({});
+    const selectedLoan = ref();
     const availableCredit = getAvailableCredit(loanData.value);
-    return { getCredit, loanData, availableCredit, formatNumber, LoanStatus };
+    const showLoan = ref(false);
+    const dialogRef = ref<QDialog>();
+    const handleLoanClick = (loan) => {
+      selectedLoan.value = loan;
+      showLoan.value = true;
+    };
+    const payLoan = () =>
+      payLoanEMI(selectedLoan.value.id).then(() => {
+        dialogRef.value?.hide();
+        Notify.create({ message: "EMI Paid Successfully!", color: "primary" });
+      });
+    return {
+      loanData,
+      availableCredit,
+      LoanStatus,
+      dialogRef,
+      handleLoanClick,
+      selectedLoan,
+      getCredit,
+      formatNumber,
+      showLoan,
+      payLoan,
+    };
   },
 };
 </script>

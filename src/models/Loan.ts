@@ -7,6 +7,7 @@ export interface Loan {
   user?: User;
   term: number;
   status: string;
+  paidAmount: number;
   interestRate?: number;
 }
 

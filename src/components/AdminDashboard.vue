@@ -48,7 +48,7 @@
           label="Reject Loan"
           @click="() => updateStatusAndFilterLoanList(LoanStatus.Rejected)"
         />
-        <q-btn v-close-popup color="warning" label="Close" />
+        <q-btn v-close-popup color="warning" label="Cancel" />
       </loan-details>
     </q-dialog>
   </main>

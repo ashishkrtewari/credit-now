@@ -375,7 +375,7 @@
                           text-bold
                           transaction__amount transaction__amount--debit
                         "
-                        >+S$ 150</span
+                        >-S$ 150</span
                       >
                       <img src="@/assets/next.svg" alt="" />
                     </div>
@@ -417,7 +417,7 @@
                           text-bold
                           transaction__amount transaction__amount--debit
                         "
-                        >+S$ 150</span
+                        >-S$ 150</span
                       >
                       <img src="@/assets/next.svg" alt="" />
                     </div>
@@ -459,7 +459,7 @@
                           text-bold
                           transaction__amount transaction__amount--debit
                         "
-                        >+S$ 150</span
+                        >-S$ 150</span
                       >
                       <img src="@/assets/next.svg" alt="" />
                     </div>

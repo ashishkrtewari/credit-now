@@ -76,7 +76,7 @@
                         "
                       >
                         <span class="text-h6">{{
-                          formatNumber(getEMIAmount(amount, term))
+                          formatNumber(getEMIAmount(amount, plan))
                         }}</span
                         ><span class="text-grey-4"> /month</span>
                       </p>
@@ -87,7 +87,7 @@
                           text-white
                         "
                       >
-                        <span> for {{ term }} months</span>
+                        <span> for {{ plan }} months</span>
                       </p></q-item-label
                     >
                   </q-item-section>
@@ -204,6 +204,7 @@ export default {
           status: LoanStatus.PendingApproval,
           user: userData.value,
           emi: getEMIAmount(amount.value, term.value),
+          paidAmount: 0,
           interestRate,
         };
         setLoanData([...loanData.value, loan]).then((saved) => {
