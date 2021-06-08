@@ -2,7 +2,11 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar class="bg-secondary">
-        <q-toolbar-title class="text-bold"> Credit Now </q-toolbar-title>
+        <q-toolbar-title class="text-bold" router-link="/dashboard">
+          <router-link to="/dashboard" class="text-white text-decoration-none"
+            >Credit Now</router-link
+          >
+        </q-toolbar-title>
         <user-info :user="userData"></user-info>
         <q-btn
           rounded
@@ -11,7 +15,7 @@
           icon-right="logout"
           @click="onLogout"
           class="logout-btn"
-          >Logout
+          ><span class="hidden-below-md">Logout</span>
         </q-btn>
       </q-toolbar>
     </q-header>
@@ -58,5 +62,16 @@ export default defineComponent({
 <style lang="scss" scoped>
 .logout-btn {
   width: 7.5rem;
+}
+.text-decoration-none {
+  text-decoration: none;
+}
+@media screen and (max-width: 599px) {
+  .hidden-below-md {
+    display: none;
+  }
+  .logout-btn {
+    width: auto;
+  }
 }
 </style>

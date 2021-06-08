@@ -91,7 +91,11 @@ export default {
     const payLoan = () =>
       payLoanEMI(selectedLoan.value.id).then(() => {
         dialogRef.value?.hide();
-        Notify.create({ message: "EMI Paid Successfully!", color: "primary" });
+        Notify.create({
+          message: "EMI Paid Successfully!",
+          color: "primary",
+          icon: "check_circle",
+        });
       });
     return {
       loanData,

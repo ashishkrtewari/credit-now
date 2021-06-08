@@ -1,7 +1,7 @@
 <template>
   <main class="row">
-    <aside class="bg-primary col-2">
-      <q-item class="full-width q-mt-lg justify-center">
+    <aside class="bg-primary col-xs-12 col-md-2">
+      <q-item class="full-width q-my-lg justify-center">
         <q-item-section>
           <q-select
             class="bg-white text-white"
@@ -13,15 +13,15 @@
         </q-item-section>
       </q-item>
     </aside>
-    <section class="row col-9">
-      <div class="col-10 offset-1">
-        <h2 class="text-h4">{{ selectedFilter }} Loans</h2>
+    <section class="row col-xs-12 col-md-9">
+      <div class="col-xs-12 col-md-10 offset-md-1">
+        <h2 class="text-h6 q-ml-md">{{ selectedFilter }} Loans</h2>
         <list-loan
           :loanData="filteredList"
           v-if="filteredList.length"
           @loanClick="(loan) => handleLoanClick(loan)"
         />
-        <p v-else class="text-left">No loans Found</p>
+        <p v-else class="text-left q-ml-md">No loans Found</p>
       </div>
     </section>
     <q-dialog
@@ -44,6 +44,7 @@
         />
         <q-btn
           v-close-popup
+          v-if="selectedLoan.status === LoanStatus.PendingApproval"
           color="negative"
           label="Reject Loan"
           @click="() => updateStatusAndFilterLoanList(LoanStatus.Rejected)"
@@ -91,13 +92,16 @@ export default {
     onMounted(() => updateFilteredList());
 
     const updateStatusAndFilterLoanList = (status: string) => {
+      const successMessage =
+        status === LoanStatus.Approved ? "Loan Approved!" : "Loan Rejected!";
       updateStatus(selectedLoan?.value?.id as number, status).then(
         (response) => {
           if (response) {
             updateFilteredList();
             dialogRef?.value?.hide();
             Notify.create({
-              message: "Loan Approved!",
+              message: successMessage,
+              color: "primary",
               icon: "check_circle",
             });
           }
@@ -126,7 +130,9 @@ export default {
 </script>
 
 <style lang="scss">
-main aside {
-  height: calc(100vh - 50px) !important;
+@media screen and (min-width: 1024px) {
+  main aside {
+    height: calc(100vh - 50px) !important;
+  }
 }
 </style>

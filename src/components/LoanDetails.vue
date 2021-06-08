@@ -25,8 +25,8 @@
         Total Amount
       </h3>
       <p class="text-h4">{{ formatNumber(loan.amount) }}</p>
-      <div class="row justify-center q-mt-md">
-        <div class="col-3">
+      <div class="row wrap justify-center q-mt-md">
+        <div class="col-xs-6 col-sm-3 q-mb-sm">
           <p class="text-weight-medium text-secondary q-mb-xs">Loan Term</p>
           <q-chip
             size="md"
@@ -37,7 +37,7 @@
             icon-remove
           />
         </div>
-        <div class="col-3">
+        <div class="col-xs-6 col-sm-3 m-b-sm">
           <p class="text-weight-medium text-secondary q-mb-xs">Monthly EMI</p>
           <q-chip
             size="md"
@@ -47,7 +47,7 @@
             class="q-px-lg"
           />
         </div>
-        <div class="col-3">
+        <div class="col-xs-6 col-sm-3 m-b-sm">
           <p class="text-weight-medium text-secondary q-mb-xs">Interest Rate</p>
           <q-chip
             size="md"
@@ -57,7 +57,7 @@
             class="q-px-lg"
           />
         </div>
-        <div class="col-3">
+        <div class="col-xs-6 col-sm-3 m-b-sm">
           <p class="text-weight-medium text-secondary q-mb-xs">Repaid Amount</p>
           <q-chip
             size="md"
@@ -100,7 +100,7 @@ export default {
 
 <style lang="scss" scoped>
 .user-details {
-  border-radius: 0 0 10rem 10rem;
+  border-radius: 0 0 50% 50%;
   padding: 1rem 0;
 }
 .status {

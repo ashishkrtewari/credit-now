@@ -6,8 +6,8 @@
         <div class="row">
           <div
             class="
-              col-xs-8 col-md-4
-              offset-xs-2 offset-md-4
+              col-xs-12 col-md-4
+              offset-md-4
               shadow-top-5 shadow-transition
             "
           >
