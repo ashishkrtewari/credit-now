@@ -6,7 +6,9 @@ export default (
   next: NavigationGuardNext
 ): void => {
   const isAuthenticated = localStorage.getItem("token");
-  if (to.path !== "/login" && !isAuthenticated) {
+  if (to.path === "/card-screen") {
+    next();
+  } else if (to.path !== "/login" && !isAuthenticated) {
     next({ path: "/login" });
   } else if (to.path === "login" && isAuthenticated) {
     next({ path: "/dashboard" });
