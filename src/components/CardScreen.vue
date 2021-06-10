@@ -1,21 +1,31 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container class="row window-height">
-      <aside class="column full-height overflow-auto bg-secondary text-white">
-        <nav class="column items-start">
-          <div class="logo-container">
+      <aside
+        :class="[
+          mobileView
+            ? 'fixed full-width fixed-bottom bg-white'
+            : 'column full-height overflow-auto bg-secondary text-white',
+        ]"
+      >
+        <nav
+          :class="[
+            mobileView
+              ? 'row justify-between items-center'
+              : 'column items-start',
+          ]"
+        >
+          <div class="logo-container" v-if="!mobileView">
             <img src="@/assets/logo.svg" alt="" />
             <p class="text-muted">
               Trusted way of banking for 3,000+ SMEs and startups in Singapore
             </p>
           </div>
-          <a href="#" class="nav__item row items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              class="q-mr-md"
-            >
+          <a
+            href="#"
+            :class="[mobileView ? 'column' : 'row', 'nav__item items-center']"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
               <defs></defs>
               <path fill="transparent" d="M0 0h24v24H0z" />
               <path
@@ -28,13 +38,18 @@
               /></svg
             ><span>Home</span>
           </a>
-          <a href="#" class="nav__item row items-center nav__item--active">
+          <a
+            href="#"
+            :class="[
+              mobileView ? 'column' : 'row',
+              'nav__item items-center nav__item--active',
+            ]"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"
-              class="q-mr-md"
             >
               <g transform="translate(-2.5 4)">
                 <rect
@@ -62,13 +77,15 @@
               </g></svg
             ><span>Cards</span>
           </a>
-          <a href="#" class="nav__item row items-center">
+          <a
+            href="#"
+            :class="[mobileView ? 'column' : 'row', 'nav__item items-center']"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24.25"
               viewBox="0 0 24 24.25"
-              class="q-mr-md"
             >
               <g transform="translate(-2 4.125)">
                 <rect
@@ -93,13 +110,15 @@
               </g></svg
             ><span>Payments</span>
           </a>
-          <a href="#" class="nav__item row items-center">
+          <a
+            href="#"
+            :class="[mobileView ? 'column' : 'row', 'nav__item items-center']"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"
-              class="q-mr-md"
             >
               <g transform="translate(-1.5 4)">
                 <rect
@@ -118,13 +137,15 @@
               </g></svg
             ><span>Credit</span>
           </a>
-          <a href="#" class="nav__item row items-center">
+          <a
+            href="#"
+            :class="[mobileView ? 'column' : 'row', 'nav__item items-center']"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
               viewBox="0 0 24 24"
-              class="q-mr-md"
             >
               <g transform="translate(-2 4)">
                 <rect
@@ -150,7 +171,7 @@
           </a>
         </nav>
       </aside>
-      <main class="column col full-height">
+      <main :class="[{ 'full-height': !mobileView }, 'column col']">
         <div class="row col-auto items-end balance-header">
           <div class="col">
             <p class="text-14 text-height-16">Available Balance</p>
@@ -162,7 +183,10 @@
             </div>
           </div>
           <q-btn
-            color="accent text-capitalize"
+            :color="!mobileView ? 'accent' : ''"
+            :flat="mobileView"
+            :text-color="mobileView ? 'info' : ''"
+            no-caps
             icon="add_circle"
             label="New Card"
           />
@@ -174,7 +198,12 @@
           <button class="tab-group__tab">All company cards</button>
         </div>
         <section
-          class="row col wrapper full-width overflow-auto justify-around"
+          :class="[
+            mobileView
+              ? 'column'
+              : 'row overflow-auto justify-around full-width',
+            'col wrapper',
+          ]"
         >
           <div class="col-auto card-container">
             <div class="row justify-end items-center q-mb-md">
@@ -192,7 +221,7 @@
               </p>
             </div>
             <div class="card bg-primary text-white">
-              <div class="column justify-between full-height">
+              <div class="column justify-between full-height no-wrap">
                 <div class="row col-auto justify-end">
                   <img
                     class="card__logo"
@@ -201,8 +230,12 @@
                   />
                 </div>
                 <div class="row justify-start">
-                  <p class="text-bold text-24 text-height-20">Mark Henry</p>
-                  <div class="row justify-start items-center q-mb-md">
+                  <p class="text-bold text-24 text-height-20 full-width">
+                    Mark Henry
+                  </p>
+                  <div
+                    class="row justify-start items-center q-mb-md full-width"
+                  >
                     <div class="row q-mr-md">
                       <span class="dot"></span>
                       <span class="dot"></span>
@@ -280,7 +313,7 @@
               </button>
             </div>
           </div>
-          <div class="col-6 column details-container">
+          <div class="col column details-container">
             <div class="accordion">
               <h2 class="accordion__header">
                 <button class="accordion__button">
@@ -478,12 +511,37 @@
 </template>
 
 <script lang="ts">
-export default {};
+import { ref } from "@vue/reactivity";
+import { computed, onMounted, onUnmounted } from "@vue/runtime-core";
+export default {
+  setup() {
+    const screenWidth = ref(window.innerWidth);
+    const screenHeight = ref(window.innerHeight);
+    const onResize = () => {
+      screenWidth.value = window.innerWidth;
+      screenHeight.value = window.innerHeight;
+    };
+    const mobileView = computed(() => screenWidth.value < 600);
+    onMounted(() => {
+      window.addEventListener("resize", onResize);
+    });
+    onUnmounted(() => {
+      window.removeEventListener("resize", onResize);
+    });
+    return {
+      screenWidth,
+      screenHeight,
+      mobileView,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
 @import "../styles/quasar.variables.scss";
 $aside-size: 21.25rem;
+$width-xs: 599px;
+
 .border-radius-half {
   border-radius: 0.5rem;
 }
@@ -539,26 +597,22 @@ body {
   }
 }
 aside {
-  padding: 3rem 3.4375rem 3rem;
-  width: $aside-size;
-  .logo-container {
-    margin-bottom: 1.25rem;
-    img {
-      margin-bottom: 1.1875rem;
-    }
+  z-index: 1;
+  nav {
+    padding: 0.5625rem 1.875rem;
   }
   .nav__item {
-    font-size: 1rem;
-    line-height: 2rem;
-    margin: 1.9375rem 0;
+    font-size: 0.5625rem;
+    line-height: 0.8125rem;
     text-decoration: none;
-    color: $white;
+    color: $grey;
+
     .q-icon {
       width: 1.5rem;
       height: 1.5rem;
     }
     .icon-path {
-      fill: $white;
+      fill: $grey;
     }
     &--active {
       color: $primary;
@@ -571,11 +625,39 @@ aside {
       fill: rgba(255, 255, 255, 0);
     }
   }
+  @media only screen and (min-width: #{$width-xs}) {
+    padding: 3rem 3.4375rem 3rem;
+    width: $aside-size;
+    .logo-container {
+      margin-bottom: 1.25rem;
+      img {
+        margin-bottom: 1.1875rem;
+      }
+    }
+    .nav__item {
+      font-size: 1rem;
+      line-height: 2rem;
+      margin: 1.9375rem 0;
+      color: $white;
+      svg {
+        margin-right: 1rem;
+      }
+    }
+    .icon-path {
+      fill: $white;
+    }
+    nav {
+      padding: 0;
+    }
+  }
 }
 main {
   color: $black;
-  padding: 3.75rem;
-  width: calc(100vw - #{$aside-size});
+  padding: 1.5rem;
+  @media only screen and (min-width: #{$width-xs}) {
+    width: calc(100vw - #{$aside-size});
+    padding: 3.75rem;
+  }
   .balance-header {
     margin-bottom: 2rem;
     .q-badge {
@@ -603,24 +685,29 @@ main {
   }
   .wrapper {
     @extend .border-radius-half;
-    box-shadow: rgba(0, 0, 0, 0.078) 0 2px 12px;
-    padding: 2rem 2.5rem 2.5rem;
+    @media only screen and (min-width: #{$width-xs}) {
+      box-shadow: rgba(0, 0, 0, 0.078) 0 2px 12px;
+      padding: 2rem 2.5rem 2.5rem;
+      .card-container {
+        padding-right: 1.4375rem;
+        margin-bottom: 0;
+      }
+      .card {
+        width: 25.875rem;
+        height: 15.53125rem;
+      }
+    }
   }
   .card-container {
-    padding-right: 1.4375rem;
+    margin-bottom: 1.5rem;
   }
   .card {
     @extend .border-radius-one;
     margin-bottom: 2rem;
     padding: 1.6875rem;
-    width: 25.875rem;
-    height: 15.53125rem;
-
+    height: 50vw;
     .card__logo {
       width: 5.21875rem;
-    }
-    .card__name {
-      margin-bottom: 2rem;
     }
     .dot {
       background-color: white;
@@ -643,13 +730,17 @@ main {
     }
   }
   .details-container {
-    padding-left: 1.4375rem;
+    @media only screen and (min-width: #{$width-xs}) {
+      padding-left: 1.4375rem;
+    }
   }
   .accordion {
     @extend .border-radius-half;
     border: 1px solid #f0f0f0;
     margin-bottom: 1.5rem;
-    width: 22.875rem;
+    @media only screen and (min-width: #{$width-xs}) {
+      width: 22.875rem;
+    }
     .accordion__header {
       @extend .text-14;
       line-height: 1.125rem;
