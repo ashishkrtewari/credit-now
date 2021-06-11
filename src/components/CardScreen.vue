@@ -172,30 +172,120 @@
         </nav>
       </aside>
       <main :class="[{ 'full-height': !mobileView }, 'column col']">
-        <div class="row col-auto items-end balance-header">
-          <div class="col">
-            <p class="text-14 text-height-16">Available Balance</p>
-            <div class="row items-center">
-              <q-badge class="font-13 text-height-16 text-bold q-px-md q-py-sm"
-                >S$</q-badge
-              >
-              <p class="text-26 q-mb-none text-bold">3,000</p>
+        <div
+          :class="[
+            mobileView
+              ? 'bg-secondary text-white top-section full-width'
+              : 'col',
+          ]"
+          ref="topSection"
+        >
+          <img
+            v-if="mobileView"
+            src="@/assets/Logo.svg"
+            alt=""
+            class="absolute mobile-logo"
+          />
+          <div class="row col-auto items-end balance-header">
+            <div class="col">
+              <p class="text-14 text-height-16">Available Balance</p>
+              <div class="row items-center">
+                <q-badge
+                  class="font-13 text-height-16 text-bold q-px-md q-py-sm"
+                  >S$</q-badge
+                >
+                <p class="text-26 q-mb-none text-bold">3,000</p>
+              </div>
+            </div>
+            <q-btn
+              :color="!mobileView ? 'accent' : ''"
+              :flat="mobileView"
+              :text-color="mobileView ? 'info' : ''"
+              no-caps
+              :class="[{ 'q-pa-none': mobileView }]"
+              icon="add_circle"
+              label="New Card"
+            />
+          </div>
+          <div class="row col-auto justify-start tab-group">
+            <button class="tab-group__tab tab-group__tab--active">
+              My debit cards
+            </button>
+            <button class="tab-group__tab">All company cards</button>
+          </div>
+          <div v-if="mobileView" class="relative-position">
+            <div class="row justify-end items-center show-card-number">
+              <button class="q-btn bg-white row q-pb-md show-card-number__btn">
+                <img
+                  src="@/assets/remove_red_eye-24px.svg"
+                  width="16"
+                  height="16"
+                  alt=""
+                  class="q-mr-sm"
+                />
+                <p
+                  class="
+                    text-12 text-height-20 text-primary text-bold
+                    q-ma-none
+                  "
+                >
+                  Show card number
+                </p>
+              </button>
+            </div>
+            <div class="card bg-primary text-white q-mt-xl">
+              <div class="column justify-between full-height no-wrap">
+                <div class="row col-auto justify-end">
+                  <img
+                    class="card__logo"
+                    src="@/assets/aspire-logo-1.svg"
+                    alt=""
+                  />
+                </div>
+                <div class="row justify-start">
+                  <p class="text-bold text-24 text-height-20 full-width">
+                    Mark Henry
+                  </p>
+                  <div
+                    class="row justify-start items-center q-mb-md full-width"
+                  >
+                    <div class="row q-mr-md">
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                    </div>
+                    <div class="row q-mr-md">
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                    </div>
+                    <div class="row q-mr-md">
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                    </div>
+                    <span class="text-14 text-height-20 text-bold">2020</span>
+                  </div>
+                  <div class="row justify-center items-center">
+                    <p
+                      class="text-14 text-height-20 text-bold q-mb-none q-mr-xl"
+                    >
+                      Thru: 12/20
+                    </p>
+                    <p class="text-14 text-height-20 text-bold q-ma-none">
+                      CVV: &#8727;&#8727;&#8727;
+                    </p>
+                  </div>
+                </div>
+                <div class="row col-auto justify-end">
+                  <img src="@/assets/visa-logo.svg" alt="" />
+                </div>
+              </div>
             </div>
           </div>
-          <q-btn
-            :color="!mobileView ? 'accent' : ''"
-            :flat="mobileView"
-            :text-color="mobileView ? 'info' : ''"
-            no-caps
-            icon="add_circle"
-            label="New Card"
-          />
-        </div>
-        <div class="row col-auto justify-start tab-group">
-          <button class="tab-group__tab tab-group__tab--active">
-            My debit cards
-          </button>
-          <button class="tab-group__tab">All company cards</button>
         </div>
         <section
           :class="[
@@ -204,9 +294,13 @@
               : 'row overflow-auto justify-around full-width',
             'col wrapper',
           ]"
+          :style="mobileView ? 'margin-top:' + scrollOffset + 'px' : ''"
         >
           <div class="col-auto card-container">
-            <div class="row justify-end items-center q-mb-md">
+            <div
+              v-if="!mobileView"
+              class="row justify-end items-center q-mb-md"
+            >
               <img
                 src="@/assets/remove_red_eye-24px.svg"
                 width="16"
@@ -220,7 +314,7 @@
                 Show card number
               </p>
             </div>
-            <div class="card bg-primary text-white">
+            <div v-if="!mobileView" class="card bg-primary text-white">
               <div class="column justify-between full-height no-wrap">
                 <div class="row col-auto justify-end">
                   <img
@@ -517,6 +611,11 @@ export default {
   setup() {
     const screenWidth = ref(window.innerWidth);
     const screenHeight = ref(window.innerHeight);
+    const topSection = ref();
+    const scrollOffset = computed(() => {
+      console.log(topSection.value);
+      return topSection.value?.offsetHeight;
+    });
     const onResize = () => {
       screenWidth.value = window.innerWidth;
       screenHeight.value = window.innerHeight;
@@ -532,6 +631,8 @@ export default {
       screenWidth,
       screenHeight,
       mobileView,
+      topSection,
+      scrollOffset,
     };
   },
 };
@@ -597,7 +698,7 @@ body {
   }
 }
 aside {
-  z-index: 1;
+  z-index: 2;
   nav {
     padding: 0.5625rem 1.875rem;
   }
@@ -613,12 +714,17 @@ aside {
     }
     .icon-path {
       fill: $grey;
+
+      @media only screen and (max-width: 600px) {
+        stroke: $grey !important;
+      }
     }
     &--active {
       color: $primary;
       font-weight: bold;
       .icon-path {
         fill: $primary;
+        stroke: $white !important;
       }
     }
     .empty-path {
@@ -653,10 +759,18 @@ aside {
 }
 main {
   color: $black;
-  padding: 1.5rem;
   @media only screen and (min-width: #{$width-xs}) {
     width: calc(100vw - #{$aside-size});
     padding: 3.75rem;
+  }
+  .top-section {
+    padding: 1.5rem;
+    position: fixed;
+    z-index: -1;
+  }
+  .mobile-logo {
+    top: 1.5rem;
+    right: 1.5rem;
   }
   .balance-header {
     margin-bottom: 2rem;
@@ -669,12 +783,15 @@ main {
     &__tab {
       @extend .transparent-button;
       border-bottom: 2px solid transparent;
-      color: $black;
+      color: $white;
       cursor: pointer;
       @extend .text-14;
       @extend .text-height-20;
       margin-right: 2rem;
       opacity: 0.6;
+      @media only screen and (min-width: #{$width-xs}) {
+        color: $black;
+      }
       &--active {
         opacity: 1;
         font-weight: 500;
@@ -697,6 +814,19 @@ main {
         height: 15.53125rem;
       }
     }
+    z-index: 1;
+    background-color: $white;
+  }
+  .show-card-number {
+    width: 100%;
+    z-index: -1;
+    top: 0;
+    position: absolute;
+    margin-top: -1.5rem;
+    .show-card-number__btn {
+      flex-direction: row;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
   }
   .card-container {
     margin-bottom: 1.5rem;
@@ -706,6 +836,7 @@ main {
     margin-bottom: 2rem;
     padding: 1.6875rem;
     height: 50vw;
+    max-width: 100%;
     .card__logo {
       width: 5.21875rem;
     }
@@ -737,9 +868,10 @@ main {
   .accordion {
     @extend .border-radius-half;
     border: 1px solid #f0f0f0;
-    margin-bottom: 1.5rem;
+    margin: 0 1.5rem 5.375rem;
     @media only screen and (min-width: #{$width-xs}) {
       width: 22.875rem;
+      margin: 0 0 1.5rem;
     }
     .accordion__header {
       @extend .text-14;
@@ -749,7 +881,7 @@ main {
     button.accordion__button {
       @extend .border-radius-half;
       border: 1px solid #f5f5f5;
-      background-color: $info-light;
+      background-color: $info-muted;
       display: flex;
       align-items: center;
       justify-content: flex-start;
