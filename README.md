@@ -78,4 +78,4 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 **CSS Challenge**
 
-- Could only create the desktop version for now - [https://credit-now.netlify.app/#/card-screen]
+- [https://credit-now.netlify.app/#/card-screen]
