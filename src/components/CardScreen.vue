@@ -179,12 +179,6 @@
           ]"
           ref="topSection"
         >
-          <img
-            v-if="mobileView"
-            src="@/assets/Logo.svg"
-            alt=""
-            class="absolute mobile-logo"
-          />
           <div class="row col-auto items-end balance-header">
             <div class="col">
               <p class="text-14 text-height-16">Available Balance</p>
@@ -196,15 +190,23 @@
                 <p class="text-26 q-mb-none text-bold">3,000</p>
               </div>
             </div>
-            <q-btn
-              :color="!mobileView ? 'accent' : ''"
-              :flat="mobileView"
-              :text-color="mobileView ? 'info' : ''"
-              no-caps
-              :class="[{ 'q-pa-none': mobileView }]"
-              icon="add_circle"
-              label="New Card"
-            />
+            <div class="col column justify-end items-end">
+              <img
+                v-if="mobileView"
+                src="@/assets/Logo.svg"
+                alt=""
+                class="q-mb-lg"
+              />
+              <q-btn
+                :color="!mobileView ? 'accent' : ''"
+                :flat="mobileView"
+                :text-color="mobileView ? 'info' : ''"
+                no-caps
+                :class="[{ 'q-pa-none': mobileView }]"
+                icon="add_circle"
+                label="New Card"
+              />
+            </div>
           </div>
           <div class="row col-auto justify-start tab-group">
             <button class="tab-group__tab tab-group__tab--active">
@@ -217,7 +219,16 @@
             class="relative-position mobile-card-container"
           >
             <div class="row justify-end items-center show-card-number">
-              <button class="q-btn bg-white row q-pb-md show-card-number__btn">
+              <button
+                class="
+                  q-btn
+                  bg-white
+                  row
+                  q-pb-md
+                  show-card-number__btn
+                  items-center
+                "
+              >
                 <img
                   src="@/assets/remove_red_eye-24px.svg"
                   width="16"
@@ -780,10 +791,6 @@ main {
       }
     }
   }
-  .mobile-logo {
-    top: 1.5rem;
-    right: 1.5rem;
-  }
   .balance-header {
     margin-bottom: 2rem;
     .q-badge {
@@ -813,9 +820,10 @@ main {
     }
   }
   .wrapper {
-    @extend .border-radius-half;
+    @extend .border-radius-one;
     @media only screen and (min-width: #{$width-xs}) {
       box-shadow: rgba(0, 0, 0, 0.078) 0 2px 12px;
+      borde-rasius: 0.5rem;
       padding: 2rem 0.875rem 2.5rem;
       .card-container {
         margin-bottom: 1.5rem;
@@ -864,7 +872,10 @@ main {
     }
   }
   .card__actions {
-    @extend .border-radius-one;
+    border-radius: 1rem 1rem 0 0;
+    @media only screen and (min-width: #{$width-xs}) {
+      border-radius: 1rem;
+    }
     background-color: $info-light;
     padding: 1.25rem 1.6875rem;
 
