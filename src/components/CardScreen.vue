@@ -171,7 +171,7 @@
           </a>
         </nav>
       </aside>
-      <main :class="[{ 'full-height': !mobileView }, 'column col']">
+      <main :class="[{ 'full-height': !mobileView }, 'col overflow-auto']">
         <div
           :class="[
             mobileView
@@ -213,7 +213,10 @@
             </button>
             <button class="tab-group__tab">All company cards</button>
           </div>
-          <div v-if="mobileView" class="relative-position">
+          <div
+            v-if="mobileView"
+            class="relative-position mobile-card-container"
+          >
             <div class="row justify-end items-center show-card-number">
               <button class="q-btn bg-white row q-pb-md show-card-number__btn">
                 <img
@@ -289,9 +292,7 @@
         </div>
         <section
           :class="[
-            mobileView
-              ? 'column'
-              : 'row overflow-auto justify-around full-width',
+            mobileView ? 'column' : 'row justify-around full-width',
             'col wrapper',
           ]"
           :style="mobileView ? 'margin-top:' + scrollOffset + 'px' : ''"
@@ -407,7 +408,7 @@
               </button>
             </div>
           </div>
-          <div class="col column details-container">
+          <div class="col-auto column details-container">
             <div class="accordion">
               <h2 class="accordion__header">
                 <button class="accordion__button">
@@ -606,21 +607,24 @@
 
 <script lang="ts">
 import { ref } from "@vue/reactivity";
-import { computed, onMounted, onUnmounted } from "@vue/runtime-core";
+import { computed, onMounted, onUnmounted, watch } from "@vue/runtime-core";
 export default {
   setup() {
     const screenWidth = ref(window.innerWidth);
     const screenHeight = ref(window.innerHeight);
     const topSection = ref();
+    let topSectionHeight = ref(topSection?.value?.offsetHeight);
     const scrollOffset = computed(() => {
-      console.log(topSection.value);
-      return topSection.value?.offsetHeight;
+      return topSectionHeight.value || topSection?.value?.offsetHeight;
     });
     const onResize = () => {
       screenWidth.value = window.innerWidth;
       screenHeight.value = window.innerHeight;
+      setTimeout(() => {
+        topSectionHeight.value = topSection?.value?.offsetHeight;
+      }, 400);
     };
-    const mobileView = computed(() => screenWidth.value < 600);
+    const mobileView = computed(() => screenWidth.value < 769);
     onMounted(() => {
       window.addEventListener("resize", onResize);
     });
@@ -641,7 +645,8 @@ export default {
 <style lang="scss" scoped>
 @import "../styles/quasar.variables.scss";
 $aside-size: 21.25rem;
-$width-xs: 599px;
+$width-xs: 768px;
+$width-sm: 1023px;
 
 .border-radius-half {
   border-radius: 0.5rem;
@@ -654,8 +659,9 @@ $width-xs: 599px;
   border: none;
 }
 body {
-  .overflow-auto {
-    overflow: auto;
+  div,
+  section {
+    transition: 0.4s;
   }
   .round {
     border-radius: 50%;
@@ -732,8 +738,9 @@ aside {
     }
   }
   @media only screen and (min-width: #{$width-xs}) {
-    padding: 3rem 3.4375rem 3rem;
-    width: $aside-size;
+    padding: 3rem 1.25rem;
+    max-width: $aside-size;
+    width: 24.89vw;
     .logo-container {
       margin-bottom: 1.25rem;
       img {
@@ -756,17 +763,28 @@ aside {
       padding: 0;
     }
   }
+  @media only screen and (min-width: #{$width-sm}) {
+    padding: 3rem 3.4375rem 3rem;
+  }
 }
 main {
   color: $black;
   @media only screen and (min-width: #{$width-xs}) {
-    width: calc(100vw - #{$aside-size});
-    padding: 3.75rem;
+    padding: 3.75rem 3.75rem 5.59375rem;
   }
   .top-section {
     padding: 1.5rem;
     position: fixed;
     z-index: -1;
+
+    .mobile-card-container {
+      width: fit-content;
+      margin: 0 auto;
+      .card {
+        max-width: 25rem;
+        max-height: 13.5rem;
+      }
+    }
   }
   .mobile-logo {
     top: 1.5rem;
@@ -804,18 +822,24 @@ main {
     @extend .border-radius-half;
     @media only screen and (min-width: #{$width-xs}) {
       box-shadow: rgba(0, 0, 0, 0.078) 0 2px 12px;
-      padding: 2rem 2.5rem 2.5rem;
+      padding: 2rem 0.875rem 2.5rem;
       .card-container {
-        padding-right: 1.4375rem;
-        margin-bottom: 0;
+        margin-bottom: 1.5rem;
       }
       .card {
         width: 25.875rem;
         height: 15.53125rem;
       }
+      .card-container,
+      .details-container {
+        padding: 0 1.4375rem;
+      }
     }
     z-index: 1;
     background-color: $white;
+  }
+  .card-container {
+    margin-bottom: 1.5rem;
   }
   .show-card-number {
     width: 100%;
@@ -828,15 +852,12 @@ main {
       border-radius: 0.5rem 0.5rem 0 0;
     }
   }
-  .card-container {
-    margin-bottom: 1.5rem;
-  }
   .card {
     @extend .border-radius-one;
     margin-bottom: 2rem;
     padding: 1.6875rem;
     height: 50vw;
-    max-width: 100%;
+    max-width: 25rem;
     .card__logo {
       width: 5.21875rem;
     }
@@ -860,18 +881,18 @@ main {
       }
     }
   }
-  .details-container {
-    @media only screen and (min-width: #{$width-xs}) {
-      padding-left: 1.4375rem;
-    }
-  }
   .accordion {
     @extend .border-radius-half;
     border: 1px solid #f0f0f0;
-    margin: 0 1.5rem 5.375rem;
+    margin: 0 1.5rem 1.5rem;
+    &:last-of-type {
+      margin: 0 1.5rem 5.375rem;
+    }
     @media only screen and (min-width: #{$width-xs}) {
-      width: 22.875rem;
-      margin: 0 0 1.5rem;
+      &div {
+        width: 22.875rem;
+        margin: 0 0 1.5rem;
+      }
     }
     .accordion__header {
       @extend .text-14;
