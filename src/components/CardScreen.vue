@@ -98,7 +98,6 @@
                   <path
                     class="icon-path"
                     style="
-                      stroke: #0c365a;
                       stroke-linecap: round;
                       stroke-linejoin: round;
                       stroke-width: 0.25px;
@@ -720,17 +719,12 @@ aside {
     }
     .icon-path {
       fill: $grey;
-
-      @media only screen and (max-width: 600px) {
-        stroke: $grey !important;
-      }
     }
     &--active {
       color: $primary;
       font-weight: bold;
       .icon-path {
         fill: $primary;
-        stroke: $white !important;
       }
     }
     .empty-path {
