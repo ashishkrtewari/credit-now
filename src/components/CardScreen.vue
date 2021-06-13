@@ -16,7 +16,7 @@
           ]"
         >
           <div class="logo-container" v-if="!mobileView">
-            <img src="@/assets/logo.svg" alt="" />
+            <img src="@/assets/logo-with-name.svg" alt="" />
             <p class="text-muted">
               Trusted way of banking for 3,000+ SMEs and startups in Singapore
             </p>
@@ -193,7 +193,7 @@
             <div class="col column justify-end items-end">
               <img
                 v-if="mobileView"
-                src="@/assets/Logo.svg"
+                src="@/assets/logo.svg"
                 alt=""
                 class="q-mb-lg"
               />
@@ -617,7 +617,7 @@
 
 <script lang="ts">
 import { ref } from "@vue/reactivity";
-import { computed, onMounted, onUnmounted, watch } from "@vue/runtime-core";
+import { computed, onMounted, onUnmounted } from "@vue/runtime-core";
 export default {
   setup() {
     const screenWidth = ref(window.innerWidth);

@@ -1,15 +1,15 @@
 <template>
-  <customer-dashboard v-if="userType === UserTypes.Customer" />
-  <admin-dashboard v-if="userType === UserTypes.Admin" />
+  <dashboard-customer v-if="userType === UserTypes.Customer" />
+  <dashboard-admin v-if="userType === UserTypes.Admin" />
 </template>
 
 <script>
+import DashboardCustomer from "./DashboardCustomer.vue";
+import DashboardAdmin from "./DashboardAdmin.vue";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import CustomerDashboard from "./CustomerDashboard.vue";
-import AdminDashboard from "./AdminDashboard.vue";
 import { UserTypes } from "@/static/UserTypes";
 export default {
-  components: { CustomerDashboard, AdminDashboard },
+  components: { DashboardCustomer, DashboardAdmin },
   setup() {
     const { storedValue: userType } = useLocalStorage("userType");
 

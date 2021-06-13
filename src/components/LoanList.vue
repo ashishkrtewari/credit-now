@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { formatNumber } from "@/static/utils";
-import { LoanStatus, Loan } from "@/models/Loan";
+import { Loan, LoanStatus } from "@/models/Loan";
 export default {
   name: "list-loan",
   props: {
@@ -49,7 +49,7 @@ export default {
     const handleLoanClick = (loan: Loan) => {
       context.emit("loanClick", loan);
     };
-    return { formatNumber, LoanStatus, handleLoanClick };
+    return { formatNumber, handleLoanClick, LoanStatus };
   },
 };
 </script>

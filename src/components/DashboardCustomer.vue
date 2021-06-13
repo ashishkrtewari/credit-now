@@ -27,7 +27,7 @@
     <section class="row" v-if="loanData?.length">
       <div class="col-10 offset-1">
         <h2 class="text-h4">Existing Loans</h2>
-        <list-loan
+        <loan-list
           :loanData="loanData"
           @loanClick="(loan) => handleLoanClick(loan)"
         />
@@ -60,19 +60,18 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
-import { LoanStatus } from "@/models/Loan";
 import { formatNumber, getAvailableCredit } from "@/static/utils";
-import ListLoan from "./ListLoan.vue";
-
 import LoanDetails from "./LoanDetails.vue";
-import { ref } from "@vue/reactivity";
+import LoanList from "./LoanList.vue";
+import { LoanStatus } from "@/models/Loan";
 import { Notify, QDialog } from "quasar";
+import { ref } from "@vue/reactivity";
 import { useLoan } from "@/hooks/useLoan";
+import { useRouter } from "vue-router";
 export default {
   components: {
-    ListLoan,
     LoanDetails,
+    LoanList,
   },
   setup() {
     const router = useRouter();
@@ -98,16 +97,16 @@ export default {
         });
       });
     return {
-      loanData,
       availableCredit,
-      LoanStatus,
       dialogRef,
-      handleLoanClick,
-      selectedLoan,
-      getCredit,
       formatNumber,
-      showLoan,
+      getCredit,
+      handleLoanClick,
+      loanData,
+      LoanStatus,
       payLoan,
+      selectedLoan,
+      showLoan,
     };
   },
 };

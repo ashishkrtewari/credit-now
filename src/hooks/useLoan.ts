@@ -5,16 +5,23 @@ import { useLocalStorage } from "./useLocalStorage";
 
 const loanData: Ref<Loan[]> = ref([]);
 
-export const useLoan = ({ amount = 80000, interestRate = 2 }) => {
+export const useLoan = ({ amount = 80000, interestRate = 10 }) => {
   const { storedValue, setValue } = useLocalStorage<Loan[]>("loanData");
   loanData.value = storedValue.value || [];
 
-  const calculateTotalInterest = ({ loanAmount, term }) =>
-    (loanAmount * (interestRate * 0.01)) / term;
+  const interestRatePerMonth = interestRate / 12 / 100;
+
+  const calculateTotalInterest = ({ loanAmount, term }) => {
+    return getEMIAmount(loanAmount, term) * term - loanAmount;
+  };
 
   const getEMIAmount = (loanAmount: number, term: number): number => {
-    const interest = calculateTotalInterest({ loanAmount, term });
-    return parseInt((loanAmount / term + interest).toFixed(0));
+    const emiAmount =
+      (loanAmount *
+        interestRatePerMonth *
+        Math.pow(1 + interestRatePerMonth, term)) /
+      (Math.pow(1 + interestRatePerMonth, term) - 1);
+    return parseInt(emiAmount.toFixed(0));
   };
 
   const getLoan = (loanId: number) => {

@@ -87,10 +87,6 @@ export default {
     loan: {
       type: Object as PropType<Loan>,
     },
-    primaryText: String,
-    secondaryText: String,
-    primaryCallback: Function,
-    secondaryCallback: Function,
   },
   setup() {
     return { formatNumber };

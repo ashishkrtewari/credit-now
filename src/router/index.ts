@@ -12,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "/get-credit",
-        component: () => import("../components/CreateLoan.vue"),
+        component: () => import("../components/LoanCreate.vue"),
       },
     ],
   },

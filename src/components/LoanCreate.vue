@@ -1,7 +1,7 @@
 <template>
   <div class="bg-primary row column justify-center items-center q-py-lg">
     <h1 class="text-h3 q-ma-none q-mb-sm text-white">
-      {{ formatNumber(availableCredit) }}
+      {{ formattedAvailableCredit }}
     </h1>
     <p class="text-h6 q-ma-none text-white">Available Credit</p>
   </div>
@@ -30,13 +30,13 @@
           <div class="q-mt-xl">
             <q-slider
               name="amount"
+              color="secondary"
               v-model="amount"
               label-always
               :min="1000"
               :max="availableCredit"
               :step="1000"
-              color="secondary"
-              :label-value="formatNumber(amount)"
+              :label-value="formattedAmount"
             />
           </div>
           <p>Move the slider to set the amount you need.</p>
@@ -51,7 +51,7 @@
 
         <q-step
           :name="2"
-          title="Pick your repaymnent plan"
+          title="Pick your repayment plan"
           icon="event_note"
           :done="step > 2"
         >
@@ -110,19 +110,27 @@
 
         <q-step :name="3" title="Review" icon="attach_money">
           <q-card class="bg-secondary text-center">
-            <div class="row justify-between q-px-md q-pt-sm text-white">
+            <div
+              class="
+                row
+                justify-between
+                items-center
+                q-px-md q-pt-sm
+                text-white
+              "
+            >
               <p class="text-h6">EMI</p>
               <p>
-                <span class="text-h6">
-                  {{ formatNumber(getEMIAmount(amount, term)) }}</span
-                ><span class="text-grey-4"> /month</span>
+                <span class="text-h6"> {{ formattedEMI }}</span
+                ><span class="text-grey-4"> /month</span><br />for
+                {{ term }} months
               </p>
             </div>
           </q-card>
           <q-card class="bg-primary text-center">
             <div class="row justify-center q-px-md q-pt-sm text-white">
               <p class="text-h6 q-mb-xs">
-                {{ formatNumber(amount) }}
+                {{ formattedAmount }}
                 <span class="text-overline block">Total Loan Amount</span>
               </p>
             </div>
@@ -130,14 +138,7 @@
           <q-card class="bg-primary text-center">
             <div class="row justify-center q-px-md q-pt-sm text-white">
               <p class="text-h6 q-mb-xs">
-                {{
-                  formatNumber(
-                    calculateTotalInterest({
-                      loanAmount: amount,
-                      term: term,
-                    }) * term
-                  )
-                }}
+                {{ formattedTotalInterest }}
                 <span class="text-overline block">Total Interest</span>
               </p>
             </div>
@@ -145,7 +146,7 @@
           <q-card class="bg-primary text-center">
             <div class="row justify-center q-px-md q-pt-sm text-white">
               <p class="text-h6 q-mb-xs">
-                {{ formatNumber(getEMIAmount(amount, term) * term) }}
+                {{ formattedTotalEMIAmount }}
                 <span class="text-overline block">Total of all EMIs</span>
               </p>
             </div>
@@ -175,6 +176,7 @@ import { formatNumber, getAvailableCredit } from "../static/utils";
 import { Loan, LoanStatus } from "../models/Loan";
 import { useRouter } from "vue-router";
 import { useUser } from "@/hooks/useUserInfo";
+import { computed } from "@vue/runtime-core";
 export default {
   setup() {
     const router = useRouter();
@@ -193,6 +195,25 @@ export default {
     >("loanData", []);
 
     const availableCredit = getAvailableCredit(loanData.value);
+
+    const formattedAvailableCredit = computed(() =>
+      formatNumber(availableCredit)
+    );
+    const formattedAmount = computed(() => formatNumber(amount.value));
+    const formattedEMI = computed(() =>
+      formatNumber(getEMIAmount(amount.value, term.value))
+    );
+    const formattedTotalInterest = computed(() =>
+      formatNumber(
+        calculateTotalInterest({
+          loanAmount: amount.value,
+          term: term.value,
+        })
+      )
+    );
+    const formattedTotalEMIAmount = computed(() =>
+      formatNumber(getEMIAmount(amount.value, term.value) * term.value)
+    );
 
     const finishLoan = () => {
       const response = confirm("Are you sure to proceed with the loan?");
@@ -215,21 +236,26 @@ export default {
       }
     };
     return {
-      step: ref(1),
       amount,
-      emiPlans,
-      term,
-      getEMIAmount,
-      formatNumber,
-      calculateTotalInterest,
-      finishLoan,
       availableCredit,
+      calculateTotalInterest,
+      emiPlans,
+      formattedAvailableCredit,
+      formattedAmount,
+      formattedEMI,
+      formattedTotalInterest,
+      formattedTotalEMIAmount,
+      formatNumber,
+      finishLoan,
+      getEMIAmount,
+      step: ref(1),
+      term,
     };
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .my-card {
   width: 250px;
 }

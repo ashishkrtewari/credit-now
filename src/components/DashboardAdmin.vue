@@ -16,7 +16,7 @@
     <section class="row col-xs-12 col-md-9">
       <div class="col-xs-12 col-md-10 offset-md-1">
         <h2 class="text-h6 q-ml-md">{{ selectedFilter }} Loans</h2>
-        <list-loan
+        <loan-list
           :loanData="filteredList"
           v-if="filteredList.length"
           @loanClick="(loan) => handleLoanClick(loan)"
@@ -56,15 +56,15 @@
 </template>
 
 <script lang="ts">
-import ListLoan from "./ListLoan.vue";
 import LoanDetails from "./LoanDetails.vue";
+import LoanList from "./LoanList.vue";
 import { Loan, LoanStatus } from "@/models/Loan";
-import { ref } from "@vue/reactivity";
-import { onMounted, watch } from "vue";
-import { useLoan } from "@/hooks/useLoan";
 import { Notify, QDialog } from "quasar";
+import { onMounted, watch } from "vue";
+import { ref } from "@vue/reactivity";
+import { useLoan } from "@/hooks/useLoan";
 export default {
-  components: { ListLoan, LoanDetails },
+  components: { LoanDetails, LoanList },
   setup() {
     const { loanData, updateStatus } = useLoan({});
     const selectedFilter = ref(LoanStatus.PendingApproval);
@@ -113,15 +113,15 @@ export default {
     );
 
     return {
-      loanData,
-      LoanStatus,
+      dialogRef,
       filteredList,
       filterOptions,
+      handleLoanClick,
+      loanData,
+      LoanStatus,
       selectedFilter,
       selectedLoan,
       showLoan,
-      dialogRef,
-      handleLoanClick,
       updateStatus,
       updateStatusAndFilterLoanList,
     };
@@ -129,7 +129,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @media screen and (min-width: 1024px) {
   main aside {
     height: calc(100vh - 50px) !important;
