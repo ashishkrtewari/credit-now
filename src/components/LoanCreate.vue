@@ -139,7 +139,9 @@
             <div class="row justify-center q-px-md q-pt-sm text-white">
               <p class="text-h6 q-mb-xs">
                 {{ formattedTotalInterest }}
-                <span class="text-overline block">Total Interest</span>
+                <span class="text-overline block"
+                  >Total Interest(10% per annum)</span
+                >
               </p>
             </div>
           </q-card>
